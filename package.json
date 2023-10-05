@@ -1,10 +1,15 @@
 {
   "name": "khouryktrl",
   "displayName": "Khoury - Run & Lint Kotlin",
-  "description": "",
+  "description": "Helper extension for CS2500 students at Northeastern University Khoury College",
+  "publisher": "Anish Sahoo",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/anish-sahoo/khouryktrl.git"
+  },
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.83.0"
+    "vscode": "^1.7.0"
   },
   "categories": [
     "Other"
@@ -33,7 +38,7 @@
     "test": "node ./test/runTest.js"
   },
   "devDependencies": {
-    "@types/vscode": "^1.83.0",
+    "@types/vscode": "^1.7.0",
     "@types/mocha": "^10.0.2",
     "@types/node": "18.x",
     "eslint": "^8.50.0",
