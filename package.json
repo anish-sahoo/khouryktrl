@@ -1,6 +1,6 @@
 {
   "name": "khouryktrl",
-  "displayName": "khoury_kotlin_run_lint",
+  "displayName": "Khoury - Run & Lint Kotlin",
   "description": "",
   "version": "0.0.1",
   "engines": {
@@ -16,15 +16,15 @@
   "contributes": {
     "commands": [{
       "command": "khouryktrl.run",
-      "title": "Run Kotlin Khoury"
+      "title": "Run Kotlin"
     },
     {
       "command": "khouryktrl.lint",
-      "title": "Lint Kotlin Khoury"
+      "title": "Lint Kotlin"
     },
     {
       "command": "khouryktrl.lintwf",
-      "title": "Ktlint Format Khoury"
+      "title": "Run Ktlint Format"
     }]
   },
   "scripts": {
