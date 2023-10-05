@@ -21,6 +21,10 @@
     {
       "command": "khouryktrl.lint",
       "title": "Lint Kotlin Khoury"
+    },
+    {
+      "command": "khouryktrl.lintwf",
+      "title": "Ktlint Format Khoury"
     }]
   },
   "scripts": {

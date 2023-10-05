@@ -9,48 +9,49 @@ const vscode = require('vscode');
  * @param {vscode.ExtensionContext} context
  */
 function activate(context) {
-	const button1 = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
-  button1.text = "Run ktlint once";
-  button1.tooltip = "Run ktlint once";
+  vscode.window.showInformationMessage("Hi! Ensure that khoury.jar is in the same folder!");
+
+	const button1 = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
+  button1.text = "Run ktlint (folder)";
+  button1.tooltip = "Run ktlint";
   button1.command = "khouryktrl.lint";
-  button1.color = new vscode.ThemeColor("#FF0000");
   button1.show();
 
-  const button2 = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 99);
-  button2.text = "Run Kotlin Script";
+  const button2 = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 98);
+  button2.text = "Run Kotlin Script (current file)";
   button2.tooltip = "Run .kts Script";
   button2.command = "khouryktrl.run";
-  button1.color = new vscode.ThemeColor("#00FF00");
   button2.show();
+
+  const button3 = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
+  button3.text = "Run ktlint --format (folder)";
+  button3.tooltip = "Run ktlint --format";
+  button3.command = "khouryktrl.lintwf";
+  button3.show();
 
   context.subscriptions.push(button1);
   context.subscriptions.push(button2);
+  context.subscriptions.push(button3);
 
 	const filePattern = '**/*.{kt,kts}';
   const watcher = vscode.workspace.createFileSystemWatcher(filePattern);
 
   // Handle file changes (enable/disable buttons)
   watcher.onDidChange(() => {
-      updateButtonsVisibility(button1, button2, vscode.workspace);
+      updateButtonsVisibility(button1, button2, button3, vscode.workspace);
   });
   watcher.onDidCreate(() => {
-      updateButtonsVisibility(button1, button2, vscode.workspace);
+      updateButtonsVisibility(button1, button2, button3, vscode.workspace);
   });
   watcher.onDidDelete(() => {
-      updateButtonsVisibility(button1, button2, vscode.workspace);
+      updateButtonsVisibility(button1, button2, button3, vscode.workspace);
   });
 
   context.subscriptions.push(watcher);
 
   // Call updateButtonsVisibility initially to check for existing files
-  updateButtonsVisibility(button1, button2, vscode.workspace);
+  updateButtonsVisibility(button1, button2, button3, vscode.workspace);
 
-  // Rest of your code (registering commands, etc.)
-
-
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "khouryktrl" is now active!');
 	// The command has been defined in the package.json file
 	// Now provide the implementation of the command with  registerCommand
 	// The commandId parameter must match the command field in package.json
@@ -59,10 +60,18 @@ function activate(context) {
 		const activeEditor = vscode.window.activeTextEditor;
 		if (activeEditor) {
 			const filePath = activeEditor.document.fileName;
-			vscode.window.showInformationMessage(`Running KTS Script: ${filePath}`);
-			const terminal = vscode.window.createTerminal('Running Kotlin File');
-			terminal.sendText(`kotlin -cp khoury.jar "${filePath}"`);
-			terminal.show();
+			vscode.window.showInformationMessage(`Running Kotlin Script: ${filePath}`);
+			const terminalName = "Run Kotlin Script";
+      let terminal = vscode.window.terminals.find(t => t.name === terminalName);
+
+      if (!terminal) {
+          terminal = vscode.window.createTerminal(terminalName);
+      }
+
+      //you can change the command here to run any script of your liking
+      terminal.sendText(`kotlin -cp khoury.jar "${filePath}"`);
+			
+      terminal.show();
 		} else {
 			vscode.window.showErrorMessage('No active editor found.');
 		}
@@ -70,14 +79,38 @@ function activate(context) {
 	
 	//code to run ktlint
 	let runLint = vscode.commands.registerCommand('khouryktrl.lint', function () {
-		vscode.window.showInformationMessage('Running KTS Lint');
-		const terminal = vscode.window.createTerminal('KTS Lint Terminal');
-		terminal.sendText('ktlint --format');
-		terminal.show();
+		vscode.window.showInformationMessage('Running ktlint on this Folder');
+		const terminalName = "ktlint";
+    let terminal = vscode.window.terminals.find(t => t.name === terminalName);
+
+    if (!terminal) {
+        terminal = vscode.window.createTerminal(terminalName);
+    }		
+    //you can change the command here to run any script of your liking
+    terminal.sendText('ktlint');
+		
+    terminal.show();
 	});
-	
+
+  //code to run ktlint with format
+  let runLintWithFormat = vscode.commands.registerCommand('khouryktrl.lintwf', function () {
+		vscode.window.showInformationMessage('Running ktlint --format on this Folder');
+		const terminalName = "ktlint format";
+    let terminal = vscode.window.terminals.find(t => t.name === terminalName);
+
+    if (!terminal) {
+        terminal = vscode.window.createTerminal(terminalName);
+    }
+		
+    //you can change the command here to run any script of your liking
+    terminal.sendText('ktlint --format');
+		
+    terminal.show();
+	});
+  
 	context.subscriptions.push(runKTS);
 	context.subscriptions.push(runLint);
+  context.subscriptions.push(runLintWithFormat);
 }
 
 // This method is called when your extension is deactivated
@@ -85,7 +118,7 @@ function deactivate() {
 	console.log(":(, extension deactivated");
 }
 
-function updateButtonsVisibility(button1, button2, folder) {
+function updateButtonsVisibility(button1, button2, button3, folder) {
   const workspaceFolders = vscode.workspace.workspaceFolders;
   if (!workspaceFolders) {
     return;
@@ -96,6 +129,7 @@ function updateButtonsVisibility(button1, button2, folder) {
     const hasKotlinFiles = ktFiles.length > 0;
     button1.visible = hasKotlinFiles;
     button2.visible = hasKotlinFiles;
+    button3.visible = hasKotlinFiles;
   });
 }
 
