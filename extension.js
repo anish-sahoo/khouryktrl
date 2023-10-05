@@ -15,19 +15,19 @@ function activate(context) {
   button1.text = "Run ktlint (folder)";
   button1.tooltip = "Run ktlint";
   button1.command = "khouryktrl.lint";
-  button1.show();
+  // button1.show();
 
   const button2 = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 98);
   button2.text = "Run Kotlin Script (current file)";
   button2.tooltip = "Run .kts Script";
   button2.command = "khouryktrl.run";
-  button2.show();
+  // button2.show();
 
   const button3 = vscode.window.createStatusBarItem(vscode.StatusBarAlignment.Right, 100);
   button3.text = "Run ktlint --format (folder)";
   button3.tooltip = "Run ktlint --format";
   button3.command = "khouryktrl.lintwf";
-  button3.show();
+  // button3.show();
 
   context.subscriptions.push(button1);
   context.subscriptions.push(button2);
@@ -127,9 +127,16 @@ function updateButtonsVisibility(button1, button2, button3, folder) {
   const hasKotlinFilesPromise = vscode.workspace.findFiles('**/*.{kt,kts}', folder.uri);
   hasKotlinFilesPromise.then((ktFiles) => {
     const hasKotlinFiles = ktFiles.length > 0;
-    button1.visible = hasKotlinFiles;
-    button2.visible = hasKotlinFiles;
-    button3.visible = hasKotlinFiles;
+    if(hasKotlinFiles){
+      button1.show();
+      button2.show();
+      button3.show();
+    }
+    else {
+      button1.hide();
+      button2.hide();
+      button3.hide();
+    }
   });
 }
 
